@@ -1,7 +1,6 @@
 ---
 title: "Measles Vaccination Coverage and Case Analysis"
 author: "Miriam Zhou"
-date: "`r Sys.Date()`"
 output: html_document
 ---
 
