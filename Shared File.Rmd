@@ -6,22 +6,59 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(sf)
+library(tigris)
+library(janitor)
+library(lubridate)
+library(viridis)
+options(tigris_use_cache = TRUE)
 ```
 
-## R Markdown
-
-
-```{r cars}
-summary(cars)
+``` {r}
+measles <- read_csv("measles_county_all_updates.csv") %>%
+  clean_names()
+glimpse(measles)
 ```
 
-## Including Plots
+```{r}
+#aggregate data
+year_to_map <- 2025
+measles_cnty <- measles %>%
+  filter(location_type == "county") %>%
+  mutate(date = ymd(date),
+         fips = str_pad(as.character(location_id), 5, pad = "0")) %>%
+  filter(year(date) == year_to_map,
+         outcome_type %in% c("case_lab-confirmed", "case_probable")) %>%
+  group_by(fips) %>%
+  summarize(cases = sum(value, na.rm = TRUE), .groups = "drop")
 
-You can also embed plots, for example:
+#county shapes
+counties_sf <- tigris::counties(cb = TRUE, year = 2023) %>%
+  filter(!STATEFP %in% c("60","66","69","72","78")) %>%
+  select(GEOID, NAME, STATEFP, geometry) %>%
+  st_as_sf() %>%
+  st_transform(5070)
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+#outbreak map
+county_centroids <- st_centroid(counties_sf) %>%
+  select(GEOID)
+case_points <- county_centroids %>%
+  left_join(measles_cnty, by = c("GEOID" = "fips")) %>%
+  filter(!is.na(cases) & cases > 0)
+
+ggplot() +
+  geom_sf(data = counties_cov, aes(fill = coverage), color = NA) +
+  geom_sf(data = case_points, aes(size = cases),
+          shape = 21, fill = "white", color = "black", alpha = 0.85) +
+  scale_fill_viridis(option = "C", direction = -1, na.value = "grey92",
+                     name = "MMR coverage (%)") +
+  scale_size_area(max_size = 7, name = "Measles cases") +
+  coord_sf() +
+  labs(title = paste("US Measles Cases and Vaccination Coverage,", year_to_map),
+       subtitle = "Bubble size = number of cases",
+       caption = "Cases: measles_county_all_updates.csv") +
+  theme_void(base_size = 12)
+
 ```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
