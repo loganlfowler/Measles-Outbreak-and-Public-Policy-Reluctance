@@ -49,16 +49,20 @@ case_points <- county_centroids %>%
   filter(!is.na(cases) & cases > 0)
 
 ggplot() +
-  geom_sf(data = counties_cov, aes(fill = coverage), color = NA) +
-  geom_sf(data = case_points, aes(size = cases),
-          shape = 21, fill = "white", color = "black", alpha = 0.85) +
-  scale_fill_viridis(option = "C", direction = -1, na.value = "grey92",
-                     name = "MMR coverage (%)") +
+  geom_sf(data = counties_sf, fill = "grey90", color = NA) +
+  
+  geom_sf(data = case_points,
+          aes(size = cases),
+          shape = 21, fill = "white", color = "black", alpha = 0.8) +
+  
   scale_size_area(max_size = 7, name = "Measles cases") +
+  
   coord_sf() +
-  labs(title = paste("US Measles Cases and Vaccination Coverage,", year_to_map),
-       subtitle = "Bubble size = number of cases",
-       caption = "Cases: measles_county_all_updates.csv") +
-  theme_void(base_size = 12)
-
+  labs(
+    title = paste("US Measles Outbreaks,", year_to_map),
+    subtitle = "Bubble size = total confirmed cases per county",
+    caption = "Data source: measles_county_all_updates.csv"
+  ) +
+  theme_void(base_size = 12) +
+  theme(plot.title = element_text(face = "bold"))
 ```
