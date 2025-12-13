@@ -60,9 +60,10 @@ The notebook is organized into four main analysis sections:
 ## Reproducibility
 
 To reproduce this analysis:
-### Install dependencies
+```r
+# Install dependencies
 install.packages(c("tidyverse", "ggplot2", "dplyr", "stringr",
                    "janitor", "broom", "scales", "ggrepel", "lmtest", "sandwich"))
 
-### Render the notebook
+# Render the notebook
 rmarkdown::render("scripts/measles_insurance_analysis.Rmd")
