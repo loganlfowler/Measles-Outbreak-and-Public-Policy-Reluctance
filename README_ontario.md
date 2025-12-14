@@ -1,5 +1,5 @@
 # Ontario Measles Vaccination and Outbreak Analysis (2013–2025)
-
+**Author:** Miriam Zhou  
 ## Overview
 
 This analysis examines how **measles vaccination coverage**, **reported outbreak cases**, and **COVID-19 vaccination patterns** evolved in **Ontario, Canada** from **2013 to 2025**.  
