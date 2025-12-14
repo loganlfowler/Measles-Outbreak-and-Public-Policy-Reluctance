@@ -1,4 +1,5 @@
 # Texas Health Insurance, Measles Outbreaks, and Labor Market Dynamics (2014–2024)
+**Author:** Miriam Zhou  
 
 ### Overview
 
